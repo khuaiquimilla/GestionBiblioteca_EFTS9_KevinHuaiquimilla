@@ -1,6 +1,9 @@
 package vista;
 
+import controlador.ControladorEstudiantes;
 import controlador.ControladorLibros;
+import controlador.ControladorPrestamos;
+import controlador.ControladorReportes;
 import controlador.ControladorUsuarios;
 import modelo.Usuario;
 
@@ -8,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-// Menú principal: panel de navegación hacia cada módulo
+// Menú principal: panel de navegación hacia cada módulo, armado a mano con layouts
 public class VentanaMenuPrincipal extends JFrame {
 
     // Componentes de la ventana
@@ -22,6 +25,11 @@ public class VentanaMenuPrincipal extends JFrame {
 
     private final Usuario usuario;                 // Quién inició sesión
 
+    // UN solo controlador de préstamos para todas las ventanas de préstamos que se abran.
+    // synchronized bloquea por objeto: si cada ventana tuviera su propio controlador,
+    // cada una tendría su propio candado y dos hilos podrían cambiar el stock a la vez.
+    private ControladorPrestamos controladorPrestamos;
+
     public VentanaMenuPrincipal(Usuario usuario) {
         this.usuario = usuario;
         setTitle("Biblioteca Escolar - Rol: " + usuario.getRol());
@@ -29,15 +37,17 @@ public class VentanaMenuPrincipal extends JFrame {
         setSize(400, 350);
         setLocationRelativeTo(null);
         setResizable(false);
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10, 10));       // NORTH = saludo, CENTER = botones
 
-        // Arriba: saludo con el método abstracto de Persona (polimorfismo)
-        lblBienvenida = new JLabel(usuario.getDescripcion(), SwingConstants.CENTER);
-        add(lblBienvenida, BorderLayout.NORTH);
+        // Arriba: saludo con el método abstracto de Persona (polimorfismo).
+        // El JPanel usa FlowLayout por defecto, que deja el saludo centrado.
+        JPanel panelSaludo = new JPanel();
+        lblBienvenida = new JLabel(usuario.getDescripcion());
+        panelSaludo.add(lblBienvenida);
+        add(panelSaludo, BorderLayout.NORTH);
 
         // Centro: un botón debajo de otro (GridLayout de 6 filas y 1 columna)
         JPanel panelBotones = new JPanel(new GridLayout(6, 1, 5, 5));
-        panelBotones.setBorder(BorderFactory.createEmptyBorder(0, 40, 20, 40));
 
         btnLibros = new JButton("Libros");
         btnEstudiantes = new JButton("Estudiantes");
@@ -69,20 +79,57 @@ public class VentanaMenuPrincipal extends JFrame {
     }
 
     private void inicializarBotones() {
-        // Los que aún muestran un aviso se reemplazan en los bloques 5, 6 y 7
         btnLibros.addActionListener(e -> abrirLibros());
-        btnEstudiantes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Gestión de estudiantes (bloque 5)"));
-        btnUsuarios.addActionListener(e -> JOptionPane.showMessageDialog(this, "Gestión de usuarios (bloque 5)"));
-        btnPrestamos.addActionListener(e -> JOptionPane.showMessageDialog(this, "Préstamos (bloque 6)"));
-        btnReportes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Reportes (bloque 7)"));
+        btnEstudiantes.addActionListener(e -> abrirEstudiantes());
+        btnUsuarios.addActionListener(e -> abrirUsuarios());
+        btnPrestamos.addActionListener(e -> abrirPrestamos());
+        btnReportes.addActionListener(e -> abrirReportes());
         btnCerrarSesion.addActionListener(e -> cerrarSesion());
     }
 
-    // Abre la ventana de libros sin cerrar el menú (VentanaLibros usa DISPOSE_ON_CLOSE)
+    // Cada ventana se abre sin cerrar el menú (todas usan DISPOSE_ON_CLOSE).
+    // El try/catch es obligatorio porque los constructores de los controladores declaran throws SQLException.
+
     private void abrirLibros() {
         try {
             new VentanaLibros(new ControladorLibros()).setVisible(true);
-        } catch (SQLException ex) {                // El constructor del controlador declara throws SQLException
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error de conexión: " + ex.getMessage());
+        }
+    }
+
+    private void abrirEstudiantes() {
+        try {
+            new VentanaEstudiantes(new ControladorEstudiantes()).setVisible(true);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error de conexión: " + ex.getMessage());
+        }
+    }
+
+    private void abrirUsuarios() {
+        try {
+            // Se le pasa el usuario conectado para que no pueda eliminarse a sí mismo
+            new VentanaUsuarios(new ControladorUsuarios(), usuario).setVisible(true);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error de conexión: " + ex.getMessage());
+        }
+    }
+
+    private void abrirPrestamos() {
+        try {
+            if (controladorPrestamos == null) {    // Se crea la primera vez y después se reutiliza
+                controladorPrestamos = new ControladorPrestamos();
+            }
+            new VentanaPrestamos(controladorPrestamos, usuario).setVisible(true);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error de conexión: " + ex.getMessage());
+        }
+    }
+
+    private void abrirReportes() {
+        try {
+            new VentanaReportes(new ControladorReportes(), usuario).setVisible(true);
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error de conexión: " + ex.getMessage());
         }
     }

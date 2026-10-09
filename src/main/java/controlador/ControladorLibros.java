@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
 import java.util.List;
 
-// Controlador de libros: la ventana le pide todo a esta clase, nunca al DAO (MVC)
+// Controlador de libros
 public class ControladorLibros {
 
     private final LibroDAO libroDAO;               // Tipo = interfaz, objeto = la Impl

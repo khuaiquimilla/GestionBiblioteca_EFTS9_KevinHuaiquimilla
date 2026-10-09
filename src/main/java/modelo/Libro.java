@@ -79,4 +79,10 @@ public class Libro {
     public void setIdCategoria(int idCategoria) {
         this.idCategoria = idCategoria;
     }
+
+    // Lo que muestra el JComboBox de préstamos: el título y cuántos quedan
+    @Override
+    public String toString() {
+        return titulo + " (stock: " + stock + ")";
+    }
 }

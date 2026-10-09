@@ -22,8 +22,16 @@ public class Estudiante extends Persona {
         this.curso = curso;
     }
 
+    // Método toString
+
     @Override
     public String getDescripcion() {
         return "Estudiante: " + getNombre() + " (" + getCurso() + ")";
+    }
+
+    // Lo que muestran los JComboBox de préstamos y reportes
+    @Override
+    public String toString() {
+        return getNombre() + " (" + curso + ")";
     }
 }

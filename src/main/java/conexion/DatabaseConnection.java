@@ -10,7 +10,7 @@ public class DatabaseConnection {
     // Datos de conexión a MySQL (base de datos "biblioteca").
     private static final String URL = "jdbc:mysql://localhost:3306/biblioteca";
     private static final String USER = "root";
-    private static final String PASSWORD = "Tremonti@0511";
+    private static final String PASSWORD = "tu_conexion";
 
     // Esta variable guarda la instancia única
     private static DatabaseConnection instancia;

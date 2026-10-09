@@ -28,7 +28,6 @@ public class VentanaLogin extends JFrame {
 
         // Panel con GridLayout: 3 filas y 2 columnas (etiqueta | campo)
         JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));   // Margen interior
 
         txtCorreo = new JTextField();
         txtContrasena = new JPasswordField();      // Muestra puntitos en vez de la clave

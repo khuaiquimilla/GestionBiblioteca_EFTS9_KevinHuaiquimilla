@@ -69,6 +69,24 @@ public class Prestamo {
     }
 
     public void setDevuelto(boolean devuelto) {
-        this.devuelto = devuelto;
+        this.devuelto = devuelto;}
+
+    // Atrasado = todavía no se devuelve
+    // No se guarda en MySQL: se calcula cada vez con la fecha de hoy
+    public boolean estaAtrasado() {
+        return !devuelto && LocalDate.now().isAfter(fechaDevolucion);
     }
+
+    // Texto que muestran las tablas de préstamos y reportes
+    public String getEstado() {
+        if (devuelto) {
+            return "Devuelto";
+        }
+        if (estaAtrasado()) {
+            return "ATRASADO";
+        }
+        return "En préstamo";
+    }
+
+
 }

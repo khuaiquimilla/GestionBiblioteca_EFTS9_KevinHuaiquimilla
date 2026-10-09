@@ -54,7 +54,6 @@ public class VentanaLibros extends JFrame {
     private JPanel crearFormulario() {
         // 3 filas x 4 columnas: etiqueta | campo | etiqueta | campo
         JPanel panel = new JPanel(new GridLayout(3, 4, 8, 8));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         txtTitulo = new JTextField();
         txtAutor = new JTextField();

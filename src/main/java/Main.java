@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-        // La interfaz gráfica se crea en el hilo de Swing (como en la guía)
+        // La interfaz gráfica se crea en el hilo de Swing.
         SwingUtilities.invokeLater(() -> {
             try {
                 ControladorUsuarios controlador = new ControladorUsuarios();
